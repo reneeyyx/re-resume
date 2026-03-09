@@ -209,3 +209,4 @@ __marimo__/
 backend/cover_letters
 backend/matched_results
 backend/auth.json
+*.DS_Store
