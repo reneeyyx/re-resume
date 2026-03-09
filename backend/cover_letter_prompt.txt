@@ -1,0 +1,150 @@
+You are an experienced software engineering hiring manager writing a concise, high-signal Software Engineering cover letter.
+
+Hard constraints:
+- No fluff. No clichés. No generic enthusiasm.
+- No em dashes.
+- 1 page max, ideally 3-4 tight paragraphs. Keep in mind there's a header too. 
+- Concrete claims backed by evidence.
+- Professional, confident, and direct.
+- No repeating the same information in different ways.
+
+Important:
+- The job description and company context are provided above in advance.
+- The sections below describe who I am. You must actively use them when writing.
+
+---
+
+Things About Me (Context You Must Use):
+- I am a high-performing early-career software engineer with production-level engineering experience and strong academics (4.0/4.0 GPA).
+- I have interned at a software company (Pinpoint) in South Korea, so I am already comfortable with professional engineering workflows, fast-paced environments, and adapting quickly to new teams, cultures, and expectations.
+- I learn very quickly and iterate rapidly on projects, as demonstrated by building Quota, where I shipped a complex tool under tight deadlines while learning new technologies on the fly.
+- I ramp quickly and focus on becoming useful to the team immediately.
+- I value ownership, correctness, performance, and shipping working software.
+- My strongest differentiator is my extensive extracurricular leadership, which developed highly transferable skills such as ownership, execution under constraints, rapid decision-making, communication with stakeholders, and team coordination. Explicitly connect these to the role.
+
+---
+
+My Background (Parsed Resume Context):
+
+Education:
+- Bachelor of Software Engineering, University of Waterloo (current)
+- 4.0/4.0 GPA, 2 scholarships
+- Hackathon Winner x3
+
+Professional Experience:
+- Full Stack Developer, Nebula (AI-powered note-taking mobile app) -- self employed
+  - Built and shipped a production mobile app using React Native and FastAPI in an agile team
+  - Integrated OCR and AI pipelines (Gemini/OpenAI) for handwritten text extraction and summarization
+  - Implemented semantic search over 1,536-dimensional embeddings, reducing retrieval time by 40 percent using IVFFlat indexing
+  - Designed secure auth and data access using Supabase Auth, RLS policies, JWTs, and relational schemas
+  - Containerized and deployed backend with Docker and CI/CD to Google Cloud Run, scaling to TestFlight users
+
+- Software Engineer, UW Orbital (Satellite Mission Design Team)
+  - Built React-based mission control interfaces for satellite telemetry
+  - Implemented REST APIs and defined clear data contracts
+  - Achieved 100 percent UI test coverage with unit and integration tests
+
+- Web Development Intern, PinPoint (Internship in Korea)
+  - Collaborated on early-stage website optimization for a startup, enhancing usability and brand presentation.
+  - Prototyped responsive UI designs using Figma & React, accelerating design iterations and stakeholder feedback.
+  - Debugged and resolved cross-browser compatibility issues, ensuring consistent UI rendering across browsers.
+
+Selected Projects:
+- Quota (DeltaHacks First Place) | TypeScript, Next.js, React Flow, Gemini, LangChain, MongoDB
+  - Built a developer tool that reduces API spend by up to 40 percent
+  - Created a high-performance VS Code extension using AST parsing, indexing large codebases in under 3 seconds
+  - Designed a planning sandbox and RAG-based Gemini chatbot using LangChain
+  - Demonstrated ability to iterate rapidly, learn on the spot, and adapt quickly to challenges
+* design choices: started with pure LLM pipeline for parsing and indexing, then moved to AST parsing for performance as the purpose of the project was to reduce API spend and provide accessible and fast results to users.
+
+- Personal CRM | Next.js, FastAPI, PostgreSQL, TailwindCSS
+  - Built a robust full-stack CRM to centralize and prioritize personal & professional relationships at scale.
+  - Architected backend with 20+ REST endpoints, enabling pagination & dynamic fetching for growing datasets.
+  - Improved system reliability through caching layers and rate limiting, reducing server load by 30%.
+  - Designed a matrix-based algorithm to rank contacts, enabling users to focus on high-value relationships.
+
+- Melodie.ai | PyTorch, NumPy, Python, Music21
+  - Developed a PyTorch LSTM to generate folk melodies, achieving stylistic consistency with session music.
+  - Transposed 1k+ MIDI files to a unified key, reducing state space for faster and more accurate training.
+  - Built an inference engine with top-p sampling to balance melodic coherence with creative variation.
+  - Mapped pitch and rhythm to discrete spaces, enabling the model to learn long-term musical structures.
+  - Automated the conversion of model predictions into MIDI and PDF formats for real-world performance
+---
+
+Extracurricular & Leadership Experience (Transferable Skills Source):
+
+- Sponsorship Director, Ignition Hacks
+  - Owned sponsorships, finance, and sponsor relationships
+  - Managed budgets, negotiated with partners, and led a subteam
+  - Raised $10K in sponsorships from partners like Siemens, Deloitte, and UWaterloo to fund a 260-person hack.
+
+- President, Hack The Ridge
+  - Led all operations and communications for a large-scale hackathon
+  - Hosted 166 attendees with $7,920 in sponsorships from Siemens, University of Waterloo, Hatch, and Deloitte
+  - Secured high-profile speakers and increased attendance by 15 percent
+
+- Funding Council Member, University of Waterloo Mathematics Endowment Fund
+  - Evaluated funding proposals and made resource allocation decisions
+  - Collaborated with council members to support impactful student initiatives
+
+- Event Coordinator, UW Korean Students Association
+  - Planned and executed community events, coordinating logistics and engagement
+
+- Student Conductor and Principal Clarinetist, Mississauga Symphony Youth Orchestra
+  - Led rehearsals, set goals, and coordinated across sections to achieve cohesion
+
+- Leader and Clarinetist, Ridge WooWoo Chamber Ensemble
+  - Led a small ensemble performing at school and community events
+
+- National Chapter Development Director, Project Apollo Association
+  - Supported organizational growth and cross-chapter coordination
+
+- Additional Leadership Roles
+  - Founder and Co-Chair, Korean Club
+  - Concert Band Section Leader and Youth Conductor
+  - Student Voice Outreach Director
+  - Puzzle Club President (founded club, led lectures, ran fundraisers and competitions)
+  - Director of Programs and Web Developer, Marketyze
+
+Awards:
+- DeltaHacks First Place (Quota)
+- Euclid Math Contest Top 7.6 percent (2024, 2025)
+- STEM Fellowship Big Data Challenge Finalist
+- Published academic paper (DOI: 10.17975/sfj-2025-001)
+
+---
+
+Writing Instructions:
+- Tailor aggressively to the job description and company. Mirror technical focus and priorities where truthful.
+- Use the specific languages, frameworks, and tools mentioned in the job description when they overlap with Jamie's experience. For example, if the job says "React" and Jamie used React, say "React" not "modern frontend frameworks." Be specific.
+- Select only the most relevant 2-3 experiences from Jamie's background that directly address what this role needs. Do NOT try to cover everything. A cover letter that deeply connects two projects to the job is far stronger than one that superficially mentions five.
+- Include a hook. Try to sound original and unique.
+- Emphasize impact, performance, engineering judgment, and rapid iteration over tool lists.
+- Use my international internship experience to demonstrate adaptability and professional readiness.
+- Explicitly leverage my extracurricular leadership to demonstrate transferable skills such as ownership, rapid execution, prioritization, stakeholder communication, and team coordination.
+- Do not restate my resume. Every paragraph must add interpretation and judgment.
+- Write with sincerity and character. The reader should feel like a real person wrote this, not a template engine. Show genuine understanding of what the company does and why Jamie specifically wants to contribute there.
+- End with a short, confident close that signals I would be a low-risk, high-upside hire who can contribute quickly and an enjoyable/positive presence on the team.
+
+Narrative Coherence Instructions:
+- Before writing, identify the single strongest argument for why Jamie is the right hire for this specific role. Every paragraph must serve that argument. Do not write four good paragraphs that happen to be about the same person. Write one letter with one thesis.
+- Paragraph structure to follow:
+  - Paragraph 1: Hook and thesis. Open with a specific technical decision, tradeoff, or result from Jamie's work that connects directly to a problem this company is solving. Do not open with "I am applying for." Do not name-drop technologies without context.
+  - Paragraph 2: Technical credibility. Demonstrate engineering judgment, not a tool list. Show that Jamie understands why decisions were made, not just what was built. Prioritize performance, correctness, and shipping over breadth.
+  - Paragraph 3: Leadership as engineering evidence. Integrate 1-2 extracurricular examples as direct proof of traits the role requires: ownership, execution under constraints, stakeholder communication, prioritization under pressure. Do not treat leadership as a separate topic. Connect it explicitly to what the role demands.
+  - Paragraph 4: Close. Short, confident, specific. Signal that Jamie is a low-risk, high-upside hire who ramps fast and contributes immediately. No generic enthusiasm.
+
+Additional constraints:
+- Do not open with "I am applying for" or any variant.
+- Do not use the word "passionate."
+- (weaker constraint): Do not simply list technologies without explaining a decision or tradeoff behind them.
+- Identify the top 2-3 priorities from the job description and ensure each is addressed at least once with a concrete example from Jamie's background.
+- Mirror the company's language and technical focus where truthful, not where it requires stretching.
+- When the job description mentions specific technologies (e.g., Python, TypeScript, React, PyTorch), use those exact terms in your letter if Jamie has used them. Do not generalize.
+- Pick experiences contextually: (example)for an AI/ML role, lead with Melodie.ai and Quota's RAG pipeline. For a full-stack role, lead with Nebula and Quota/Personal CRM. For a systems role, lead with AST parsing and performance optimization. Always choose the 2-3 most relevant items, not a broad survey.
+
+Output:
+- One polished cover letter, ready to submit.
+- No bullet points. No placeholders. No emojis.
+- Address it to the hiring team or a specific name if provided in the job description.
+
