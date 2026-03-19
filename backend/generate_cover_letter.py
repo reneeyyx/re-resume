@@ -7,20 +7,33 @@ import argparse
 import subprocess
 from datetime import datetime
 import pandas as pd
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-MODEL_NAME = "gemini-2.5-flash"
+def load_config():
+    config_path = "customizations/configuration.json"
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(
+            f"Configuration file not found: {config_path}\n"
+            "Ensure customizations/configuration.json exists and is valid JSON."
+        )
+    with open(config_path, "r") as f:
+        return json.load(f)
+
+config = load_config()
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
+MODEL_NAME = config["model"]
 SCRAPED_FILE = "scraped_jobs.xlsx"
 RANKED_FILE = "matched_results/ranked_jobs.xlsx"
-PROMPT_FILE = "cover_letter_prompt.txt"
+PROMPT_FILE = "customizations/cover_letter_prompt.txt"
 TEMPLATE_FILE = "cover_letter_template.tex"
-NEW_TEMPLATE_FILE = "newtemplate.tex"
-RESUME_FILE = "resume.txt"
+NEW_TEMPLATE_FILE = "customizations/newtemplate.tex"
+RESUME_FILE = "customizations/resume.txt"
 OUTPUT_DIR = "cover_letters"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -236,10 +249,10 @@ IMPORTANT: Return your response as JSON with these exact fields:
 
     for attempt in range(3):
         try:
-            model = genai.GenerativeModel(model_name)
-            response = model.generate_content(
-                full_prompt,
-                generation_config={"response_mime_type": "application/json"}
+            response = client.models.generate_content(
+                model=model_name,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
             )
             try:
                 return json.loads(response.text)
@@ -324,10 +337,10 @@ IMPORTANT: Return your response as JSON with this exact field:
 
     for attempt in range(3):
         try:
-            model = genai.GenerativeModel(model_name)
-            response = model.generate_content(
-                full_prompt,
-                generation_config={"response_mime_type": "application/json"}
+            response = client.models.generate_content(
+                model=model_name,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
             )
             try:
                 return json.loads(response.text)

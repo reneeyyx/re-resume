@@ -3,22 +3,35 @@ import time
 import json
 import logging
 import pandas as pd
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-MODEL_NAME = "gemini-2.5-flash"
+def load_config():
+    config_path = "customizations/configuration.json"
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(
+            f"Configuration file not found: {config_path}\n"
+            "Ensure customizations/configuration.json exists and is valid JSON."
+        )
+    with open(config_path, "r") as f:
+        return json.load(f)
+
+config = load_config()
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
+MODEL_NAME = config["model"]
 INPUT_FILE = "scraped_jobs.xlsx"
 OUTPUT_DIR = "matched_results"
-RESUME_FILE = "resume.txt"
+RESUME_FILE = "customizations/resume.txt"
 RANKED_OUTPUT = os.path.join(OUTPUT_DIR, "ranked_jobs.xlsx")
 TAILORED_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "tailored_resumes")
 
-TOP_N = 200
-BATCH_SIZE = 50  # jobs per ranking batch (to fit context window)
+TOP_N = config["matcher"]["top_n"]
+BATCH_SIZE = config["matcher"]["batch_size"]
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(TAILORED_OUTPUT_DIR, exist_ok=True)
@@ -77,10 +90,10 @@ def rank_batch(df_batch, resume, batch_num, total_batches):
     """
 
     try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            config=types.GenerateContentConfig(response_mime_type="application/json")
         )
         return json.loads(response.text)
     except Exception as e:
@@ -155,10 +168,10 @@ def write_tailored_resume(job_row, resume):
     """
 
     try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            config=types.GenerateContentConfig(response_mime_type="application/json")
         )
         return json.loads(response.text)
     except Exception as e:

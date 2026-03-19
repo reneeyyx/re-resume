@@ -1,0 +1,21 @@
+{
+  "model": "gemini-2.5-flash",
+  "scraper": {
+    "job_category": "Co-op Jobs",
+    "job_subcategory": "Full-Cycle Service",
+    "level_filters": ["Junior", "Intermediate"],
+    "degree_filters": [
+      "ENG - Electrical and Computer Engineering",
+      "ENG - Software Engineering",
+      "ENG - Systems Design",
+      "MATH - Applied Mathematics",
+      "MATH - Computer Science",
+      "MATH - Computing and Financial Management"
+    ],
+    "max_pages": 300
+  },
+  "matcher": {
+    "top_n": 200,
+    "batch_size": 50
+  }
+}

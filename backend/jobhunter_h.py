@@ -3,6 +3,7 @@ import time
 import random
 import logging
 import re
+import json
 import argparse
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -28,9 +29,21 @@ AUTH_FILE = "auth.json"
 ENTRY_URL = "https://waterlooworks.uwaterloo.ca/waterloo.htm"
 DASHBOARD_URL_PART = "myAccount/dashboard.htm"
 
+def load_config():
+    config_path = "customizations/configuration.json"
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(
+            f"Configuration file not found: {config_path}\n"
+            "Ensure customizations/configuration.json exists and is valid JSON."
+        )
+    with open(config_path, "r") as f:
+        return json.load(f)
+
+config = load_config()
+
 # SETTINGS
-JOBS_PER_PAGE_GUESS = 50 
-MAX_PAGES = 300 
+JOBS_PER_PAGE_GUESS = 50
+MAX_PAGES = config["scraper"]["max_pages"]
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="WaterlooWorks Job Scraper")
@@ -152,18 +165,10 @@ def apply_all_filters(page):
     Orchestrates the application of all filters sequentially.
     """
     # 1. Level Filter
-    toggle_filter_category(page, "Level", ["Junior", "Intermediate"])
-    
+    toggle_filter_category(page, "Level", config["scraper"]["level_filters"])
+
     # 2. Targeted Degrees Filter
-    degrees = [
-        "ENG - Electrical and Computer Engineering",
-        "ENG - Software Engineering",
-        "ENG - Systems Design",
-        "MATH - Applied Mathematics",
-        "MATH - Computer Science",
-        "MATH - Computing and Financial Management"
-    ]
-    toggle_filter_category(page, "Targeted Degrees", degrees)
+    toggle_filter_category(page, "Targeted Degrees", config["scraper"]["degree_filters"])
 
 def extract_text_sections(html_content):
     soup = BeautifulSoup(html_content, "html.parser")

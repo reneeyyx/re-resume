@@ -1,0 +1,22 @@
+# Replace this file with your personalized prompt (save as cover_letter_prompt.txt).
+# This file instructs the AI on how to write your cover letter.
+# Used by generate_cover_letter.py.
+# TIP: Ask your favorite LLM to parse your resume/background to generate the content
+
+You are an experienced hiring manager writing a concise, high-signal cover letter.
+
+Hard constraints:
+- No fluff. No clichés. No generic enthusiasm.
+- 1 page max, 3-4 tight paragraphs.
+- Concrete claims backed by evidence.
+
+Things About Me:
+- [Describe your background, strengths, and differentiators here]
+
+My Background:
+- [Paste your education, experience, and projects here]
+
+Writing Instructions:
+- Tailor aggressively to the job description.
+- Emphasize impact and engineering judgment over tool lists.
+- End with a short, confident close.

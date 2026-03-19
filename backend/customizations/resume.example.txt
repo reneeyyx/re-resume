@@ -1,0 +1,17 @@
+# Replace this file with your actual resume content (save as resume.txt).
+# Plain text format. Used by ai_matcher_bulk.py for job ranking and tailoring.
+
+NAME: Your Name
+EDUCATION: University, Degree (Year - Present), GPA
+
+EXPERIENCE:
+1. Role @ Company (Date - Date): Technologies used. Key achievements with metrics.
+2. Role @ Company (Date - Date): Technologies used. Key achievements with metrics.
+
+PROJECTS:
+1. Project Name: Technologies. What it does and key results.
+2. Project Name: Technologies. What it does and key results.
+
+SKILLS: Skill1, Skill2, Skill3, ...
+
+AWARDS: Award1, Award2, ...

@@ -210,3 +210,9 @@ backend/cover_letters
 backend/matched_results
 backend/auth.json
 *.DS_Store
+
+# Personal customization files (use the .example versions as starting points)
+backend/customizations/resume.txt
+backend/customizations/cover_letter_prompt.txt
+backend/customizations/newtemplate.tex
+
