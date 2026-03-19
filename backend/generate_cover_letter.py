@@ -31,7 +31,6 @@ MODEL_NAME = config["model"]
 SCRAPED_FILE = "scraped_jobs.xlsx"
 RANKED_FILE = "matched_results/ranked_jobs.xlsx"
 PROMPT_FILE = "customizations/cover_letter_prompt.txt"
-TEMPLATE_FILE = "cover_letter_template.tex"
 NEW_TEMPLATE_FILE = "customizations/newtemplate.tex"
 RESUME_FILE = "customizations/resume.txt"
 OUTPUT_DIR = "cover_letters"
@@ -51,7 +50,6 @@ def parse_arguments():
     parser.add_argument("job_id", type=str, nargs='?', default=None, help="Job ID from scraped_jobs.xlsx")
     parser.add_argument("--all", action="store_true", help="Generate cover letters for ALL ranked jobs")
     parser.add_argument("--custom", action="store_true", help="Paste job info manually")
-    parser.add_argument("--new-template", action="store_true", help="Use newtemplate.tex (fixed body + tailored paragraph)")
     parser.add_argument("--model", type=str, default=MODEL_NAME, help=f"Gemini model (default: {MODEL_NAME})")
     parser.add_argument("--no-pdf", action="store_true", help="Skip PDF generation, output .tex only")
     args = parser.parse_args()
@@ -194,82 +192,6 @@ def load_resume():
         return f.read().strip()
 
 
-def load_template():
-    """Load LaTeX template."""
-    if not os.path.exists(TEMPLATE_FILE):
-        logger.error(f"❌ Template file '{TEMPLATE_FILE}' not found!")
-        return None
-    with open(TEMPLATE_FILE, 'r', encoding='utf-8') as f:
-        return f.read()
-
-
-def generate_cover_letter(job, prompt, model_name):
-    """Send job context + prompt to Gemini and get back a cover letter."""
-    job_title = job.get('Job Title', 'Unknown')
-    org = job.get('Organization', 'Unknown')
-
-    logger.info(f"✍️ Generating cover letter for: {job_title} @ {org}")
-
-    job_context = f"""
-JOB TITLE: {job_title}
-COMPANY/ORGANIZATION: {org}
-DIVISION: {job.get('Division', 'N/A')}
-CITY: {job.get('City', 'N/A')}
-LEVEL: {job.get('Level', 'N/A')}
-
-JOB SUMMARY:
-{job.get('Summary', 'N/A')}
-
-JOB RESPONSIBILITIES:
-{job.get('Responsibilities', 'N/A')}
-
-REQUIRED SKILLS:
-{job.get('Skills', 'N/A')}
-"""
-
-    full_prompt = f"""
-Here is the job I am applying to:
-
-{job_context}
-
----
-
-Now write my cover letter using the following instructions and context about me:
-
-{prompt}
-
-IMPORTANT: Return your response as JSON with these exact fields:
-{{
-    "cover_letter_body": "The full cover letter body text. Must fit on ONE PAGE but be comprehensive and well-tailored. Write exactly 4 paragraphs: (1) Opening with a hook and genuine interest in the role, (2) How my technical experience and projects add concrete value to this team, (3) How my leadership and international experience demonstrate ownership, adaptability, and professional readiness, (4) Short confident close signaling I am a low-risk high-upside hire. No greeting or sign-off - those are in the template. Use **double asterisks** to bold a few key phrases or words that you want to emphasize (3-5 bold phrases max across the entire letter).",
-    "hiring_manager": "Hiring Manager (always use exactly this unless a real name is explicitly stated in the job posting - do NOT make up names)",
-    "company": "{org}",
-    "company_department": "The department or division name if known, otherwise empty string"
-}}
-"""
-
-    for attempt in range(3):
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=full_prompt,
-                config=types.GenerateContentConfig(response_mime_type="application/json")
-            )
-            try:
-                return json.loads(response.text)
-            except json.JSONDecodeError:
-                # Try to extract JSON from response with regex
-                match = re.search(r'\{[\s\S]*\}', response.text)
-                if match:
-                    return json.loads(match.group())
-                logger.warning(f"⚠️ JSON parse failed (attempt {attempt + 1}/3), retrying...")
-        except Exception as e:
-            logger.warning(f"⚠️ Attempt {attempt + 1}/3 failed: {e}")
-        import time
-        time.sleep(2)
-
-    logger.error("❌ Generation failed after 3 attempts")
-    return None
-
 
 def generate_tailored_paragraph(job, prompt, model_name=MODEL_NAME):
     """Generate only the tailored paragraph for the new template."""
@@ -392,48 +314,6 @@ def escape_latex_preserving_commands(text):
     return text
 
 
-def render_pdf(job_id, job_title, org, cover_letter_data, template, job):
-    """Fill template and compile to PDF."""
-    today = datetime.now().strftime("%Y/%m/%d")
-
-    body = cover_letter_data.get('cover_letter_body', '')
-    hiring_manager = cover_letter_data.get('hiring_manager', 'Hiring Manager')
-    company = cover_letter_data.get('company', org)
-    department = cover_letter_data.get('company_department', '')
-    division = job.get('Division', '') if isinstance(job.get('Division'), str) else ''
-    dept_display = department or division
-
-    # Convert **bold** markers to LaTeX, escaping content inside each bold phrase
-    def bold_replace(m):
-        inner = escape_latex(m.group(1))
-        return f'\\textbf{{{inner}}}'
-
-    body_escaped = re.sub(r'\*\*(.+?)\*\*', bold_replace, body)
-    # Escape the rest (non-bold text)
-    body_escaped = escape_latex_preserving_commands(body_escaped)
-    # Convert double newlines to paragraph breaks
-    body_escaped = body_escaped.replace('\n\n', '\n\n\n')
-
-    filled = template
-    filled = filled.replace('((DATE))', today)
-    filled = filled.replace('((HIRING_MANAGER))', escape_latex(hiring_manager))
-    filled = filled.replace('((COMPANY))', escape_latex(company))
-    filled = filled.replace('((COMPANY_DEPARTMENT))', escape_latex(dept_display))
-    filled = filled.replace('((COVER_LETTER_BODY))', body_escaped)
-    filled = filled.replace('((JOB_TITLE))', escape_latex(job_title))
-
-    # Build filename
-    safe_title = "".join(c for c in job_title if c.isalpha() or c.isdigit() or c == ' ').rstrip()
-    safe_title = safe_title.replace(' ', '_')
-    base_name = f"{job_id}_{safe_title}"
-
-    tex_path = os.path.join(OUTPUT_DIR, f"{base_name}.tex")
-    with open(tex_path, 'w', encoding='utf-8') as f:
-        f.write(filled)
-
-    logger.info(f"📄 Saved LaTeX: {tex_path}")
-    return tex_path, base_name
-
 
 def compile_pdf(tex_path):
     """Compile LaTeX to PDF using xelatex."""
@@ -488,55 +368,36 @@ def process_single_job(job_id, job, prompt, template, args):
     job_title = job.get('Job Title', 'Unknown')
     org = job.get('Organization', 'Unknown')
 
-    if args.new_template:
-        # New template mode: generate only the tailored paragraph
-        result = generate_tailored_paragraph(job, prompt, args.model)
-        if not result:
-            return False
+    result = generate_tailored_paragraph(job, prompt, args.model)
+    if not result:
+        return False
 
-        paragraph = result.get('tailored_paragraph', '')
+    paragraph = result.get('tailored_paragraph', '')
 
-        # Convert **bold** to \textbf{}
-        def bold_replace(m):
-            inner = escape_latex(m.group(1))
-            return f'\\textbf{{{inner}}}'
+    def bold_replace(m):
+        inner = escape_latex(m.group(1))
+        return f'\\textbf{{{inner}}}'
 
-        paragraph_escaped = re.sub(r'\*\*(.+?)\*\*', bold_replace, paragraph)
-        paragraph_escaped = escape_latex_preserving_commands(paragraph_escaped)
+    paragraph_escaped = re.sub(r'\*\*(.+?)\*\*', bold_replace, paragraph)
+    paragraph_escaped = escape_latex_preserving_commands(paragraph_escaped)
 
-        filled = template.replace('((TAILORED_PARAGRAPH))', paragraph_escaped)
+    filled = template.replace('((TAILORED_PARAGRAPH))', paragraph_escaped)
 
-        safe_title = "".join(c for c in job_title if c.isalpha() or c.isdigit() or c == ' ').rstrip()
-        safe_title = safe_title.replace(' ', '_')
-        base_name = f"{job_id}_{safe_title}"
+    safe_title = "".join(c for c in job_title if c.isalpha() or c.isdigit() or c == ' ').rstrip()
+    safe_title = safe_title.replace(' ', '_')
+    base_name = f"{job_id}_{safe_title}"
 
-        tex_path = os.path.join(OUTPUT_DIR, f"{base_name}.tex")
-        with open(tex_path, 'w', encoding='utf-8') as f:
-            f.write(filled)
-        logger.info(f"📄 Saved LaTeX: {tex_path}")
+    tex_path = os.path.join(OUTPUT_DIR, f"{base_name}.tex")
+    with open(tex_path, 'w', encoding='utf-8') as f:
+        f.write(filled)
+    logger.info(f"📄 Saved LaTeX: {tex_path}")
 
-        # Save plain text
-        txt_path = os.path.join(OUTPUT_DIR, f"{base_name}.txt")
-        with open(txt_path, 'w', encoding='utf-8') as f:
-            f.write(f"Tailored paragraph for: {job_title} @ {org}\n")
-            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
-            f.write("="*60 + "\n\n")
-            f.write(paragraph)
-
-    else:
-        # Original template mode: generate full cover letter
-        cover_letter_data = generate_cover_letter(job, prompt, args.model)
-        if not cover_letter_data:
-            return False
-
-        tex_path, base_name = render_pdf(job_id, job_title, org, cover_letter_data, template, job)
-
-        txt_path = os.path.join(OUTPUT_DIR, f"{base_name}.txt")
-        with open(txt_path, 'w', encoding='utf-8') as f:
-            f.write(f"Cover Letter for: {job_title} @ {org}\n")
-            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
-            f.write("="*60 + "\n\n")
-            f.write(cover_letter_data.get('cover_letter_body', ''))
+    txt_path = os.path.join(OUTPUT_DIR, f"{base_name}.txt")
+    with open(txt_path, 'w', encoding='utf-8') as f:
+        f.write(f"Tailored paragraph for: {job_title} @ {org}\n")
+        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+        f.write("="*60 + "\n\n")
+        f.write(paragraph)
 
     if not args.no_pdf:
         pdf_path = compile_pdf(tex_path)
@@ -556,10 +417,7 @@ def main():
     if not prompt:
         sys.exit(1)
 
-    if args.new_template:
-        template_path = NEW_TEMPLATE_FILE
-    else:
-        template_path = TEMPLATE_FILE
+    template_path = NEW_TEMPLATE_FILE
 
     if not os.path.exists(template_path):
         logger.error(f"❌ Template not found: {template_path}")
