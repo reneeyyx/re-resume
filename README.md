@@ -42,8 +42,8 @@ Scrapes → ranks → prompts you for cover letter generation.
 
 ### Individual steps
 ```bash
-./run_scrape.sh                        # scrape WaterlooWorks → scraped_jobs.xlsx
-./run_match.sh                         # rank jobs with AI → matched_results/ranked_jobs.xlsx
+./run_scrape.sh                        # scrape WaterlooWorks → results/scraped_jobs.xlsx
+./run_match.sh                         # rank jobs with AI → results/ranked_jobs.xlsx
 ./run_cover_letter.sh --all            # generate cover letters for all ranked jobs
 ./run_cover_letter.sh <job_id>         # single job by ID
 ./run_cover_letter.sh --custom         # paste a job posting manually
@@ -54,7 +54,7 @@ Scrapes → ranks → prompts you for cover letter generation.
 
 | Path | Contents |
 |------|----------|
-| `backend/scraped_jobs.xlsx` | Raw scraped job listings |
-| `backend/matched_results/ranked_jobs.xlsx` | Jobs ranked 0–100 with match reasons |
-| `backend/matched_results/tailored_resumes/` | Per-job tailored resume bullets |
-| `backend/cover_letters/` | Generated `.tex` and `.pdf` cover letters |
+| `backend/results/scraped_jobs.xlsx` | Raw scraped job listings |
+| `backend/results/ranked_jobs.xlsx` | Jobs ranked 0–100 with match reasons |
+| `backend/results/tailored_resumes/` | Per-job tailored resume bullets |
+| `backend/results/cover_letters/` | Generated `.tex` and `.pdf` cover letters |

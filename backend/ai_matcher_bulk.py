@@ -24,8 +24,8 @@ config = load_config()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 MODEL_NAME = config["model"]
-INPUT_FILE = "scraped_jobs.xlsx"
-OUTPUT_DIR = "matched_results"
+INPUT_FILE = "results/scraped_jobs.xlsx"
+OUTPUT_DIR = "results"
 RESUME_FILE = "customizations/resume.txt"
 RANKED_OUTPUT = os.path.join(OUTPUT_DIR, "ranked_jobs.xlsx")
 TAILORED_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "tailored_resumes")

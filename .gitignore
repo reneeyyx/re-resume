@@ -206,8 +206,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-backend/cover_letters
-backend/matched_results
+backend/results
 backend/auth.json
 *.DS_Store
 
@@ -217,3 +216,4 @@ backend/customizations/cover_letter_prompt.txt
 backend/customizations/newtemplate.tex
 backend/depricated
 note.md
+backend/results

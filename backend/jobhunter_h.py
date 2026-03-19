@@ -47,7 +47,7 @@ MAX_PAGES = config["scraper"]["max_pages"]
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="WaterlooWorks Job Scraper")
-    parser.add_argument("-o", "--output", type=str, default="scraped_jobs.xlsx", help="Output filename")
+    parser.add_argument("-o", "--output", type=str, default="results/scraped_jobs.xlsx", help="Output filename")
     return parser.parse_args()
 
 def human_delay(min_seconds=1.5, max_seconds=3.5):
@@ -310,7 +310,11 @@ def scrape_all_pages(page, output_file):
     all_jobs_df = pd.DataFrame()
     existing_ids = set()
     start_page = 1
-    
+
+    output_dir = os.path.dirname(output_file)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
     # 1. READ EXISTING FILE
     if os.path.exists(output_file):
         try:

@@ -28,12 +28,12 @@ config = load_config()
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 MODEL_NAME = config["model"]
-SCRAPED_FILE = "scraped_jobs.xlsx"
-RANKED_FILE = "matched_results/ranked_jobs.xlsx"
+SCRAPED_FILE = "results/scraped_jobs.xlsx"
+RANKED_FILE = "results/ranked_jobs.xlsx"
 PROMPT_FILE = "customizations/cover_letter_prompt.txt"
 NEW_TEMPLATE_FILE = "customizations/newtemplate.tex"
 RESUME_FILE = "customizations/resume.txt"
-OUTPUT_DIR = "cover_letters"
+OUTPUT_DIR = "results/cover_letters"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -494,7 +494,7 @@ def main():
         if not success:
             sys.exit(1)
 
-        print(f"\n🎉 Done! Cover letter saved to cover_letters/")
+        print(f"\n🎉 Done! Cover letter saved to results/cover_letters/")
 
     else:
         # --- SINGLE MODE ---
@@ -519,7 +519,7 @@ def main():
         if not success:
             sys.exit(1)
 
-        print(f"\n🎉 Done! Cover letter saved to cover_letters/")
+        print(f"\n🎉 Done! Cover letter saved to results/cover_letters/")
 
 
 if __name__ == "__main__":
