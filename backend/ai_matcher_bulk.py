@@ -43,7 +43,7 @@ logger = logging.getLogger()
 def load_resume():
     if not os.path.exists(RESUME_FILE):
         logger.error(f"❌ Resume file '{RESUME_FILE}' not found!")
-        logger.error("Create a resume.txt file in the backend/ directory.")
+        logger.error("Create a resume.txt file in the backend/customizations/ directory.")
         return None
     with open(RESUME_FILE, 'r', encoding='utf-8') as f:
         return f.read().strip()

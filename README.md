@@ -1,27 +1,60 @@
-flow:
+# Resume Scraper Matcher
 
-customization:
-- resume.txt
-- newtemplate.tex/cover_letter_template.tex (cleanup later) -> template cover letter
-- categories.txt to configure categories to scrape
-- cover_letter_prompt -> customizable prompt to generate cover letter
--> generate this prompt with gemini & llm of ur choice + paste ur prompt
+Automated co-op job pipeline for WaterlooWorks — scrapes job listings, ranks them against your resume with AI, and generates tailored cover letters.
 
+## Setup
 
-requirements:
-- create/activate venv
-- install requirements.txt
-- fill in the details above
-- set up latex generation (install packages)
+**1. Prerequisites**
+- Python 3.11+
+- A Google Gemini API key
+- `xelatex` for PDF generation (`brew install --cask mactex-no-gui`)
 
-chore:`
-- get rid of two api keys in .env
+**2. Virtual environment**
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r backend/requirements.txt
+.venv/bin/playwright install chromium
+```
 
+**3. Environment variables** — create `backend/.env`:
+```
+WW_USERNAME=your_waterlooworks_username
+WW_PASSWORD=your_waterlooworks_password
+GOOGLE_API_KEY=your_gemini_api_key
+```
 
-to-do:
-- migrate to google-genai from depricated
-- first check if theres anything hardcoded in the program thats customizable (i.e., role that they're searching for) and if there is, make it customizable 
-- moving all customizationf iles inside of customizations/ 
-- setting up customization.json with the role that they're searching for (it's used in some prompts in ai_matcher_bulk.py)
-- for the customization text files, make an .example file for each or a base file to start with. then i'm going to gitignore the personalized txt files
-- make shell script to run workflows
+**4. Customization files** — copy each example and fill it in:
+```bash
+cp backend/customizations/resume.example.txt backend/customizations/resume.txt
+cp backend/customizations/cover_letter_prompt.example.txt backend/customizations/cover_letter_prompt.txt
+cp backend/customizations/newtemplate.example.tex backend/customizations/newtemplate.tex
+```
+
+Edit `backend/customizations/configuration.json` to set your degree filters, job category, and model preferences.
+
+## Usage
+
+### Full pipeline
+```bash
+./run_all.sh
+```
+Scrapes → ranks → prompts you for cover letter generation.
+
+### Individual steps
+```bash
+./run_scrape.sh                        # scrape WaterlooWorks → scraped_jobs.xlsx
+./run_match.sh                         # rank jobs with AI → matched_results/ranked_jobs.xlsx
+./run_cover_letter.sh --all            # generate cover letters for all ranked jobs
+./run_cover_letter.sh <job_id>         # single job by ID
+./run_cover_letter.sh --custom         # paste a job posting manually
+./run_cover_letter.sh --all --new-template  # use fixed-body template (tailored paragraph only)
+```
+
+## Output
+
+| Path | Contents |
+|------|----------|
+| `backend/scraped_jobs.xlsx` | Raw scraped job listings |
+| `backend/matched_results/ranked_jobs.xlsx` | Jobs ranked 0–100 with match reasons |
+| `backend/matched_results/tailored_resumes/` | Per-job tailored resume bullets |
+| `backend/cover_letters/` | Generated `.tex` and `.pdf` cover letters |
